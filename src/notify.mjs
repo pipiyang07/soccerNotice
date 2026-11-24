@@ -61,21 +61,21 @@ export function dueNotifications({
   postWindowHours = DEFAULT_POST_WINDOW_HOURS,
 }) {
   const windowMs = windowMinutes * 60_000
-  const startedMs = new Date(fixture.start).getTime()
   const out = []
 
   for (const fixture of fixtures) {
+    const startMs = new Date(fixture.start).getTime()
     let type = null
     let text = ''
     if (fixture.state === 'scheduled') {
-      const lead = new Date(fixture.start).getTime() - now
+      const lead = startMs - now
       const target = leadHours * HOUR
       if (lead <= target + windowMs && lead >= target - windowMs) {
         type = 'pre'
         text = preMatchText(fixture)
       }
     } else if (fixture.state === 'finished' && fixture.score) {
-      const sinceStart = now - startedMs
+      const sinceStart = now - startMs
       if (sinceStart >= 0 && sinceStart <= postWindowHours * HOUR) {
         type = 'post'
         text = postMatchText(fixture)

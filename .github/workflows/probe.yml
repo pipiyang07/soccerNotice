@@ -1,0 +1,38 @@
+name: probe
+
+# S0-CI：验证 GitHub Actions 运行器能否抓取 SofaScore
+# 手动触发，或在 workflow 文件变更时自动跑一次
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/probe.yml'
+      - 'scripts/probe.mjs'
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: 安装 Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: 抓取七支队伍赛程
+        run: node scripts/probe.mjs
+
+      - name: 上传结果
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: probe-result
+          path: out/
+          retention-days: 7

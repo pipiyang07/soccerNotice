@@ -1,0 +1,23 @@
+name: probe-sources
+
+# 诊断：云端运行器能否访问候选中文数据源（不需要浏览器，纯 HTTP）
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/probe-sources.yml'
+      - 'scripts/probe-sources.mjs'
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: 探测数据源可达性
+        run: node scripts/probe-sources.mjs

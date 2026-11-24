@@ -22,6 +22,13 @@ await page.goto('https://www.sofascore.com/football/team/china-u23/49032', {
   timeout: 60_000,
 })
 
+// 诊断：首页是否被 Cloudflare 拦截（用于区分“过不了挑战”与“IP 被限流”）
+const diagnostics = {
+  url: page.url(),
+  title: await page.title(),
+  head: (await page.content()).replace(/\s+/g, ' ').slice(0, 160),
+}
+
 const result = await page.evaluate(async (teams) => {
   const out = {}
   for (const [name, id] of Object.entries(teams)) {
@@ -63,7 +70,9 @@ await browser.close()
 
 mkdirSync('out', { recursive: true })
 const file = `out/probe-${new Date().toISOString().slice(0, 10)}.json`
-writeFileSync(file, JSON.stringify(result, null, 2))
+writeFileSync(file, JSON.stringify({ diagnostics, teams: result }, null, 2))
+
+console.log('诊断:', JSON.stringify(diagnostics))
 
 let total = 0
 for (const [name, data] of Object.entries(result)) {

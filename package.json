@@ -7,7 +7,9 @@
     "doc": "docs"
   },
   "scripts": {
-    "probe": "node scripts/probe.mjs"
+    "collect": "node src/collect.mjs",
+    "test": "node --test test/",
+    "probe-sources": "node scripts/probe-sources.mjs"
   },
   "keywords": [],
   "author": "",

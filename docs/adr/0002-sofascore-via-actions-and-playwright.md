@@ -1,6 +1,6 @@
 # 2. 用 GitHub Actions + Playwright 抓 SofaScore，而非付费 API
 
-- **Status**: Accepted
+- **Status**: Superseded by ADR 0003（S0 验证证伪：Actions 运行器被重定向到 captcha.html）
 - **Context**:
   SofaScore 对中国七支国字号队伍的覆盖最好（实测可拿到成年队 2027 亚洲杯小组赛、U17 世界杯、
   U19/U20/U15 友谊赛），但它是非官方接口，站点在 Cloudflare 后面，按 TLS 指纹拦截非浏览器客户端：

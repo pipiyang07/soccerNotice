@@ -75,6 +75,9 @@ gh variable set QQ_GROUP_OPENIDS --body "687BA91DB3F1AE385F8B1AFC4308E911" --rep
 # 本地验证凭据与群权限
 QQ_GROUP_OPENIDS=你的group_openid node --env-file=.env scripts/send-test.mjs
 
+# 云端验证 secrets 与群权限（会真的往群里发一条测试消息）
+gh workflow run send-test --repo <owner>/soccerNotice
+
 # 云端验证推送链路（无待发提醒时会输出 0 条并正常退出）
 gh workflow run push --repo <owner>/soccerNotice
 ```

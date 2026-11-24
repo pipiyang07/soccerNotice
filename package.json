@@ -1,0 +1,19 @@
+{
+  "name": "soccer-notice",
+  "version": "1.0.0",
+  "description": "中国男子国字号队伍赛程 QQ 群推送",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "probe": "node scripts/probe.mjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "playwright": "^1.65.1"
+  }
+}

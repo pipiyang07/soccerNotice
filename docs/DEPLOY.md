@@ -97,6 +97,7 @@ gh workflow run push --repo <owner>/soccerNotice
 
 ```zsh
 npm test                      # 全部单元测试
+npm run replay -- 54463381    # 手动补推某场比赛（node scripts/replay-notify.mjs 的简写）
 npm run collect               # 手动采集一次赛程
 node scripts/probe-sources.mjs # 检查数据源可达性（含云端差异）
 ```

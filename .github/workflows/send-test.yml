@@ -1,0 +1,23 @@
+name: send-test
+
+# 手动触发：向配置的群发一条测试消息，验证 secrets 与群主动推送权限
+on:
+  workflow_dispatch:
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: 发送测试消息
+        env:
+          QQ_APP_ID: ${{ secrets.QQ_APP_ID }}
+          QQ_APP_SECRET: ${{ secrets.QQ_APP_SECRET }}
+          QQ_GROUP_OPENIDS: ${{ vars.QQ_GROUP_OPENIDS }}
+        run: node scripts/send-test.mjs

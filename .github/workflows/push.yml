@@ -40,7 +40,7 @@ jobs:
           if git diff --staged --quiet; then
             echo "无新增发送记录，跳过提交"
           else
-            git pull --rebase --quiet
             git commit -m "chore(data): 更新提醒发送记录"
+            git pull --rebase --quiet
             git push
           fi

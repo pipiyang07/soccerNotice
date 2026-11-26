@@ -1,6 +1,6 @@
 # 3. 改用懂球帝赛程接口作为主数据源
 
-- **Status**: Accepted
+- **Status**: Accepted（运行环境部分被 ADR 0004 取代，数据源选择仍然有效）
 - **Context**:
   ADR 0002 选择了 SofaScore + GitHub Actions + Playwright。S0 验证结果推翻了它：
   GitHub Actions 运行器访问 sofascore 时被直接重定向到 `captcha.html`，七支队伍全部返回 403；

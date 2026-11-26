@@ -2,11 +2,12 @@
 const HOUR = 3600_000
 
 /**
- * 赛前提醒的触发窗口：[提前 24h 前 1 小时, 提前 24h 后 1 小时]
- * 用窗口而非精确时间点，是为了容忍定时任务被平台延迟执行
+ * 赛前提醒的触发窗口：[提前 24h 前 6 小时, 提前 24h 后 6 小时]
+ * 用宽窗口而非精确时间点，是为了容忍定时任务延迟（平台 cron 抖动）
+ * 与机器休眠（唤醒后补跑），宁可早/晚几小时，不能漏
  */
 const DEFAULT_LEAD_HOURS = 24
-const DEFAULT_WINDOW_MINUTES = 60
+const DEFAULT_WINDOW_MINUTES = 360
 // 只推 24 小时内结束的比赛，避免首次上线时把历史比分一次性刷到群里
 const DEFAULT_POST_WINDOW_HOURS = 24
 

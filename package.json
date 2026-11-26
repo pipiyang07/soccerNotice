@@ -10,7 +10,8 @@
     "collect": "node src/collect.mjs",
     "test": "node --test test/",
     "probe-sources": "node scripts/probe-sources.mjs",
-    "replay": "node --env-file=.env scripts/replay-notify.mjs"
+    "replay": "node --env-file=.env scripts/replay-notify.mjs",
+    "run": "./scripts/run-once.sh"
   },
   "keywords": [],
   "author": "",

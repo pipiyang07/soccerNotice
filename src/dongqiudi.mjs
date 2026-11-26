@@ -1,7 +1,9 @@
 // 懂球帝赛程接口客户端
 // 接口：GET /magicball/v1/list/schedule_list?tab_type=fixture|schedule&start=YYYY-MM-DD HH:mm:ss
 // start 是「北京时间当天 00:00」对应的 UTC 时间字符串（即前一天 16:00:00）
-const BASE = 'https://www.dongqiudi.com/magicball/v1/list/schedule_list'
+// 可通过 DQD_BASE 覆盖，便于本地验证失败告警之类的场景
+const BASE =
+  process.env.DQD_BASE ?? 'https://www.dongqiudi.com/magicball/v1/list/schedule_list'
 const UA =
   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36'
 const HEADERS = {

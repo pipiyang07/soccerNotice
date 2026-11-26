@@ -1,22 +1,16 @@
-name: collect
+name: probe-collect
 
-# 定时采集国字号赛程并回写数据快照
-# 每小时跑一次：Actions 的 cron 在整点高峰会延迟，非整点更稳；频率也足够覆盖“赛前 24h”窗口
+# 用途已变更：主链路已转移到本地 Mac（住宅 IP 才能访问懂球帝），
+# 这里仅作为「云端是否恢复可达」的探测器，不再写回任何数据。
 on:
   schedule:
     - cron: '17 * * * *'
   workflow_dispatch:
 
-concurrency:
-  group: collect
-  cancel-in-progress: false
-
 jobs:
-  collect:
+  probe:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    permissions:
-      contents: write
     steps:
       - uses: actions/checkout@v4
 
@@ -24,18 +18,5 @@ jobs:
         with:
           node-version: 22
 
-      - name: 采集赛程
+      - name: 探测云端能否采集
         run: node src/collect.mjs
-
-      - name: 回写数据快照
-        run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add data/fixtures.json
-          if git diff --staged --quiet; then
-            echo "赛程无变化，跳过提交"
-          else
-            git commit -m "chore(data): 更新国字号赛程快照"
-            git pull --rebase --quiet
-            git push
-          fi

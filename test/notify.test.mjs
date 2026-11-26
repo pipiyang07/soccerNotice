@@ -39,7 +39,7 @@ test('赛前提醒在 24h 窗口内触发', () => {
 })
 
 test('窗口边界外不触发', () => {
-  for (const hours of [22, 26]) {
+  for (const hours of [16, 32]) {
     const out = dueNotifications({
       fixtures: [scheduled],
       sentKeys: new Set(),

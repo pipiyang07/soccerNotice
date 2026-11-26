@@ -1,22 +1,14 @@
 name: push
 
-# 定时推送：读最新赛程快照 → 计算待发提醒 → 发 QQ 群消息 → 回写已发送记录
-# 与 collect 错开触发时间，保证先采集再推送
+# 主链路已转移到本地 Mac，这里只保留手动触发用于调试，
+# 避免 Actions 与本地同时读取不同的 sent.json 造成重复推送。
 on:
-  schedule:
-    - cron: '22 * * * *'
   workflow_dispatch:
-
-concurrency:
-  group: push
-  cancel-in-progress: false
 
 jobs:
   push:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    permissions:
-      contents: write
     steps:
       - uses: actions/checkout@v4
 
@@ -30,17 +22,3 @@ jobs:
           QQ_APP_SECRET: ${{ secrets.QQ_APP_SECRET }}
           QQ_GROUP_OPENIDS: ${{ vars.QQ_GROUP_OPENIDS }}
         run: node src/push.mjs
-
-      - name: 回写已发送记录
-        if: always()
-        run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add data/sent.json
-          if git diff --staged --quiet; then
-            echo "无新增发送记录，跳过提交"
-          else
-            git commit -m "chore(data): 更新提醒发送记录"
-            git pull --rebase --quiet
-            git push
-          fi

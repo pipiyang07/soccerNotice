@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { dueNotifications, preMatchText, postMatchText } from '../src/notify.mjs'
+import { dueNotifications, preMatchText, postMatchText, alertText } from '../src/notify.mjs'
 
 const START = '2026-11-26T15:00:00.000Z'
 const START_MS = Date.parse(START)
@@ -102,4 +102,17 @@ test('文案包含队伍、赛事与北京时间', () => {
   const post = postMatchText(finished)
   assert.match(post, /2-2/)
   assert.match(post, /比赛结束/)
+})
+test('告警文案带上失败原因与数据源', () => {
+  const text = alertText({
+    failures: 3,
+    lastSuccessAt: '2026-11-26T07:54:53.435Z',
+    lastError: '2026-11-26/fixture: HTTP 403 DQD-server/1.17.8.2',
+    backoffHours: 6,
+  })
+  assert.match(text, /连续失败：3 次/)
+  assert.match(text, /数据源：懂球帝/)
+  assert.match(text, /HTTP 403/)
+  assert.match(text, /6 小时后重试/)
+  assert.match(text, /11\/26 15:54/)
 })

@@ -3,6 +3,7 @@
 import { spawnSync } from 'node:child_process'
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs'
 import { getAccessToken, sendGroupMessage } from './qqbot.mjs'
+import { alertText } from './notify.mjs'
 
 const HEALTH_FILE = 'data/health.json'
 const BACKOFF_HOURS = [1, 3, 6] // 连续失败后的重试间隔，超出则一直用最后一个
@@ -18,12 +19,21 @@ function loadHealth() {
   }
 }
 
+function loadLastError() {
+  try {
+    const { reasons } = JSON.parse(readFileSync('data/last-error.json', 'utf8'))
+    return Array.isArray(reasons) && reasons.length > 0 ? reasons[0] : null
+  } catch {
+    return null
+  }
+}
+
 function saveHealth(health) {
   mkdirSync('data', { recursive: true })
   writeFileSync(HEALTH_FILE, JSON.stringify(health, null, 2) + '\n')
 }
 
-async function alert(failures, health) {
+async function alert(failures, health, backoffHours) {
   const appId = process.env.QQ_APP_ID
   const appSecret = process.env.QQ_APP_SECRET
   const groups = (process.env.QQ_GROUP_OPENIDS ?? '')
@@ -35,15 +45,12 @@ async function alert(failures, health) {
     return
   }
 
-  const lastOk = health.lastSuccessAt
-    ? new Date(health.lastSuccessAt).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' })
-    : '未知'
-  const text = [
-    '⚠️ 赛程数据源连续采集失败',
-    `失败次数：${failures} 次`,
-    `最后一次成功：${lastOk}`,
-    '已自动降频重试，期间的比赛提醒可能延迟或缺失。',
-  ].join('\n')
+  const text = alertText({
+    failures,
+    lastSuccessAt: health.lastSuccessAt,
+    lastError: loadLastError(),
+    backoffHours,
+  })
 
   try {
     const token = await getAccessToken(appId, appSecret)
@@ -79,7 +86,7 @@ if (collect.status !== 0) {
   if (failures >= ALERT_THRESHOLD) {
     const lastAlert = health.alertedAt ? Date.parse(health.alertedAt) : 0
     if (now - lastAlert > ALERT_COOLDOWN_HOURS * HOUR) {
-      await alert(failures, health)
+      await alert(failures, health, backoff)
       health.alertedAt = new Date(now).toISOString()
     }
   }

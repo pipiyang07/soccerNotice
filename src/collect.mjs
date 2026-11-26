@@ -48,6 +48,12 @@ for (const offset of RESULT_DAYS) await collect(addDays(today, offset), 'schedul
 
 // 全部请求失败说明接口不可达（而非个别日期缺数据），保留旧数据并让流程失败以便告警
 if (failed.length === requests) {
+  // 记录失败原因，供 run.mjs 写进告警文案
+  mkdirSync('data', { recursive: true })
+  writeFileSync(
+    'data/last-error.json',
+    JSON.stringify({ at: new Date().toISOString(), reasons: failed }, null, 2) + '\n',
+  )
   console.error(`\n全部 ${requests} 个请求失败，保留原有赛程不覆盖`)
   process.exitCode = 1
 } else {

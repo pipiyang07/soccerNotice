@@ -26,6 +26,26 @@ function teamLabel(fixture) {
   return `中国${fixture.team === '成年队' ? '' : ' ' + fixture.team}`
 }
 
+/**
+ * 数据源故障告警文案
+ * 带上最近一次失败原因，让人能分清是网络抖动还是被平台拦截
+ */
+export function alertText({ failures, lastSuccessAt, lastError, backoffHours }) {
+  const lastOk = lastSuccessAt
+    ? new Date(lastSuccessAt).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' })
+    : '未知'
+  return [
+    '⚠️ 赛程数据源连续采集失败',
+    `数据源：懂球帝`,
+    `连续失败：${failures} 次`,
+    `最后一次成功：${lastOk}`,
+    lastError ? `最近原因：${lastError}` : null,
+    `已自动降频（${backoffHours} 小时后重试），期间提醒可能延迟。`,
+  ]
+    .filter(Boolean)
+    .join('\n')
+}
+
 export function preMatchText(fixture) {
   return [
     `⚽ ${teamLabel(fixture)} 赛前提醒`,

@@ -1,0 +1,19 @@
+name: probe-dongqiudi
+
+# 诊断懂球帝接口在不同请求特征下的响应（排查云端 403）
+on:
+  workflow_dispatch:
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: 对照诊断
+        run: node scripts/probe-dongqiudi.mjs

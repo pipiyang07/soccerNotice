@@ -4,6 +4,12 @@
 const BASE = 'https://www.dongqiudi.com/magicball/v1/list/schedule_list'
 const UA =
   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36'
+const HEADERS = {
+  'user-agent': UA,
+  accept: 'application/json, text/plain, */*',
+  'accept-language': 'zh-CN,zh;q=0.9',
+  referer: 'https://www.dongqiudi.com/match',
+}
 
 /**
  * 把北京时间日期转成接口要求的 start 参数
@@ -34,10 +40,13 @@ export function addDays(bjDate, days) {
 export async function fetchMatches(bjDate, tab) {
   const url = `${BASE}?language=zh-CN&tab_type=${tab}&cmp_type=soccer&start=${encodeURIComponent(startParam(bjDate))}`
   const res = await fetch(url, {
-    headers: { 'user-agent': UA, accept: 'application/json' },
+    headers: HEADERS,
     signal: AbortSignal.timeout(30_000),
   })
-  if (!res.ok) throw new Error(`HTTP ${res.status}`)
+  if (!res.ok) {
+    const body = (await res.text()).replace(/\s+/g, ' ').slice(0, 200)
+    throw new Error(`HTTP ${res.status} ${body}`)
+  }
   const json = await res.json()
   if (json.code !== 0) throw new Error(`接口返回 code=${json.code} ${json.message ?? ''}`)
   return json.data?.matches ?? []
